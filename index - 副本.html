@@ -1,0 +1,1891 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>SSPA生产质量管理看板</title>
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" href="./css/index.css">
+		<script src="js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/world.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/echarts-gl.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/moment.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" src="js/axios.js"></script>
+		<script src="js/scroll.js" type="text/javascript" charset="utf-8"></script>
+		<!-- <script src="js/style.js" type="text/javascript" charset="utf-8"></script> -->
+	</head>
+
+	<body>
+		<div id="content">
+			<div id="app"></div>
+			<div class="header">
+				<img src="image/kb_top_logo1.png" class="logoImg">
+				<p class="logoTitle"> SSAM 生产数字平台 | Manufacturing Digital Platform</p>
+				<p class="line"></p>
+			</div>
+			<div class="leftBox">
+				<div class="toggle" @click="toggle" v-show="!istoggle"><i class="el-icon-s-operation"></i></div>
+				<div class="toggle" @click="toggle" v-show="istoggle"><i class="el-icon-close"></i></div>
+				<div class="search" v-show="istoggle">
+					<el-row :gutter="20" type="flex" class="row-bg" justify="center">
+						<el-col :span="7">
+							<el-date-picker v-model="newDate" type="date" placeholder="请选择日期" @change="changeData"
+								:picker-options="pickerOptions1" style="width: 100%;" value-format="yyyy-MM-dd"
+								:clearable=false>
+							</el-date-picker>
+						</el-col>
+					</el-row>
+				</div>
+				<div class="oneLeft">
+					<div class="swiperTitle">
+						<span class="mo23">产品族</span>
+						<span class="mo23">Target</span>
+						<span class="mo23">Output</span>
+						<span class="mo20">PPR</span>
+					</div>
+					<ul class="swiperData">
+						<vue-seamless-scroll :data="tableData" :class-option="optionHoverOther" class="seamless-warp ">
+							<li v-for="(item,index) in tableData" :key="index">
+								<span class="mo23 ">
+									<el-tooltip class="item" effect="dark" :content="item.producttype" placement="top">
+										<a style="color: #FFFFFF;">{{item.producttype}} </a>
+									</el-tooltip>
+								</span>
+
+								<span class="mo23">{{item.Cama}}</span>
+								<span class="mo23">{{item.output}}</span>
+								<span class="mo23 proutArea" v-if='item.ppr<90'>
+									<el-tag type="danger" effect="dark">{{item.ppr + '%'}} </el-tag>
+								</span>
+								<span class="mo23 proutArea" v-else-if='90<=item.ppr && item.ppr<=95'>
+									<el-tag type="warning" effect="dark"> {{item.ppr + '%'}}</el-tag>
+								</span>
+								<span class="mo23 proutArea" v-else='item.ppr>95'>
+									<el-tag type="success" effect="dark"> {{item.ppr + '%'}}</el-tag>
+								</span>
+							</li>
+						</vue-seamless-scroll>
+					</ul>
+					<span class="border row1"></span>
+					<span class="border row2"></span>
+					<span class="border col1"></span>
+					<span class="border col2"></span>
+				</div>
+			</div>
+
+			<div class="centerBox">
+				<div class="fourBigBox">
+					<div class="fourBox">
+						<div class="mycharts" id="myChart1"></div>
+						<span class="border row1"></span>
+						<span class="border row2"></span>
+						<span class="border col1"></span>
+						<span class="border col2"></span>
+					</div>
+					<div class="fourBox">
+						<div class="mycharts" id="myChart2"></div>
+					</div>
+				</div>
+
+				<div class="fiveBox fiveBottom">
+					<div class="toggle2" @click="toggle2" v-show="!istoggle2"><i class="el-icon-s-operation"></i></div>
+					<div class="toggle2" @click="toggle2" v-show="istoggle2"><i class="el-icon-close"></i></div>
+					<div class="search2" v-show="istoggle2">
+						<el-row :gutter="20" type="flex" justify="center">
+							<el-col :span="5">
+								<el-select v-model="newArea" placeholder="选择区域" clearable @change="changeArea">
+									<el-option v-for="item in optionsArea" :key="item.value" :label="item.label"
+										:value="{value:item.value,label:item.label}" style="width: 100%;"></el-option>
+								</el-select>
+							</el-col>
+							<el-date-picker v-model="newDate2" type="daterange" align="center" unlink-panels
+								range-separator="至" start-placeholder="开始日期" value-format="yyyy-MM-dd"
+								end-placeholder="结束日期" :picker-options="pickerOptions2" :clearable=false>
+							</el-date-picker>
+							<el-col :span="5">
+								<el-button type="success" @click="searchOEE">查询</el-button>
+							</el-col>
+						</el-row>
+					</div>
+					<div class="mycharts" id="myChart3"></div>
+				</div>
+
+				<div class="fiveBox">
+					<div class="mycharts" id="myChart4"></div>
+				</div>
+
+
+			</div>
+
+			<div class="rightBox">
+				<div class="twoBox">
+					<div class="pieChart" id="myChart5"></div>
+					<div class="batteryChart" id="myChart6"></div>
+
+				</div>
+				<div class="threeBox">
+					<div class="toggle3" @click="toggle3" v-show="!istoggle3"><i class="el-icon-s-operation"></i></div>
+					<div class="toggle3" @click="toggle3" v-show="istoggle3"><i class="el-icon-close"></i></div>
+					<div class="search3" v-show="istoggle3">
+						<el-row :gutter="20" type="flex" justify="center">
+							<el-col :span="5">
+								<el-select v-model="newFamily" placeholder="选择产品类型" clearable @change="changeType">
+									<el-option v-for="item in optionsFamily" :key="item.value" :label="item.label"
+										:value="{value:item.value,label:item.label}" style="width: 100%;"></el-option>
+								</el-select>
+							</el-col>
+							<el-date-picker v-model="newDate3" type="daterange" align="center" unlink-panels
+								range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+								value-format="yyyy-MM-dd" :picker-options="pickerOptions3" :clearable=false>
+							</el-date-picker>
+							<el-col :span="5">
+								<el-button type="success" @click="searchIE">查询</el-button>
+							</el-col>
+						</el-row>
+					</div>
+					<div class="mycharts" id="myChart7"></div>
+
+				</div>
+				<div class="threeBox">
+					<div class="mycharts" id="myChart8"></div>
+					<span class="border row1"></span>
+					<span class="border row2"></span>
+					<span class="border col1"></span>
+					<span class="border col2"></span>
+				</div>
+			</div>
+		</div>
+	</body>
+
+
+
+</html>
+<script type="text/javascript">
+	// let url = "http://10.177.34.15:23111"
+	// let url = "http://192.168.1.18:9100"
+	let url = "http://192.168.1.18:23113"
+	// let url = "http://10.177.34.15:23113"
+
+	new Vue({
+		el: '#content',
+		data: {
+			pickerOptions1: {
+				disabledDate(time) {
+					return time.getTime() > Date.now(); //如果没有后面的-8.64e7就是不可以选择今天的 
+				}
+			},
+			newDate: moment(new Date()).add('year', 0).format("YYYY-MM-DD"), //选择日期
+			newDate2: [
+				moment(new Date()).add('year', 0).format("YYYY-MM-DD"),
+				moment(new Date()).add('year', 0).format("YYYY-MM-DD")
+			], //OEE& NEE 选择日期
+			newDate3: [
+				moment(new Date()).add('year', 0).format("YYYY-MM-DD"),
+				moment(new Date()).add('year', 0).format("YYYY-MM-DD")
+			], //IE&& KE  选择日期
+			newArea: '全部', // 选择区域默认值,
+			optionsArea: [], // 选择区域
+			newFamily: '全部', //选择产品族默认值
+			optionsFamily: [], // 选择产品族
+			istoggle: false, // 表格互斥时间
+			istoggle2: false, // 图表互斥时间	
+			istoggle3: false, // 图表互斥时间	
+			labelList: [], //OEE & NEE x周轴默认值
+			labelOneX: [], //OEE 选择其中一个x轴值
+			labelList2: [], // IE & KE X轴默认值
+			labelTwoX: [], //ie & ke 选择其中一个默认值
+			pickerOptions2: {
+				shortcuts: [{
+					text: '最近一周',
+					onClick(picker) {
+						const end = new Date();
+						const start = new Date();
+						start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+						picker.$emit('pick', [start, end]);
+					}
+				}, {
+					text: '最近一个月',
+					onClick(picker) {
+						const end = new Date();
+						const start = new Date();
+						start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+						picker.$emit('pick', [start, end]);
+					}
+				}, {
+					text: '最近三个月',
+					onClick(picker) {
+						const end = new Date();
+						const start = new Date();
+						start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+						picker.$emit('pick', [start, end]);
+					}
+				}]
+			},
+			pickerOptions3: {
+				shortcuts: [{
+					text: '最近一周',
+					onClick(picker) {
+						const end = new Date();
+						const start = new Date();
+						start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+						picker.$emit('pick', [start, end]);
+					}
+				}, {
+					text: '最近一个月',
+					onClick(picker) {
+						const end = new Date();
+						const start = new Date();
+						start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+						picker.$emit('pick', [start, end]);
+					}
+				}, {
+					text: '最近三个月',
+					onClick(picker) {
+						const end = new Date();
+						const start = new Date();
+						start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+						picker.$emit('pick', [start, end]);
+					}
+				}]
+			},
+			options: [],
+			tableData: [],
+
+			//OEE & NEE 可选择默认值
+			dataOneBar: {
+				dataOneBarX: [],
+				dataOneBar1: [],
+				dataOneBar2: [],
+				dataOneBar3: [],
+				dataOneBar4: [],
+			},
+
+			//IE & KE 可选择默认值
+			dataKEBar: {
+				dataKEBarX: [],
+				dataKEBar1: [],
+				dataKEBar2: [],
+				dataKEBar3: [],
+				dataKEBar4: [],
+			},
+
+
+			//OEE & NEE 不 可选择默认值
+			dataOneBar2: {
+				dataOneBarX: [],
+				dataOneBar1: [],
+				dataOneBar2: [],
+				dataOneBar3: [],
+				dataOneBar4: [],
+			},
+
+			//IE & KE 不 可选择默认值
+			dataKEBar2: {
+				dataKEBarX: [],
+				dataKEBar1: [],
+				dataKEBar2: [],
+				dataKEBar3: [],
+				dataKEBar4: [],
+			},
+
+
+			fiveEchart: [],
+			KsData: [],
+			peopleData: [],
+			dataTwoPie: [],
+		},
+		computed: {
+			optionHoverOther() {
+				return {
+					// step: 0.3, // 数值越大速度滚动越快
+					step: 0, // 数值越大速度滚动越快
+					limitMoveNum: 0, // 开始无缝滚动的数据量 this.dataList.length
+					hoverStop: true, // 是否开启鼠标悬停stop
+					direction: 1, // 0向下 1向上 2向左 3向右
+					openWatch: true, // 开启数据实时监控刷新dom
+					singleHeight: 0, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+					waitTime: 1000 // 单步运动停止的时间(默认值1000ms)
+				}
+			}
+
+		},
+		methods: {
+
+			toggle() {
+				this.istoggle = !this.istoggle
+			},
+
+			toggle2() {
+				this.istoggle2 = !this.istoggle2
+			},
+			toggle3() {
+				this.istoggle3 = !this.istoggle3
+			},
+
+			//table表格选择日期
+			changeData(val) {
+				this.centerTable()
+			},
+
+
+			// OEE & NEE 选择获取值
+			changeArea(val) {
+				this.labelOneX = [val.label]
+			},
+
+			//IE & KE 选择获取值
+			changeType(val) {
+				this.labelTwoX = [val.label]
+			},
+
+
+			//OEE & NEE查询
+			searchOEE() {
+
+				this.centerTable()
+				if (this.newArea === '' || this.newArea === '全部') {
+
+					this.dataOneBar.dataOneBarX = this.labelList
+				} else {
+
+					this.dataOneBar.dataOneBarX = this.labelOneX
+				}
+			},
+
+			//IE & KE查询
+			searchIE() {
+				this.centerTable()
+				if (this.newFamily === '' || this.newFamily === '全部') {
+					this.dataKEBar.dataKEBarX = this.labelList2
+				} else {
+					this.dataKEBar.dataKEBarX = this.labelTwoX
+				}
+			},
+
+
+			//中间table表格初始化查询
+			centerTable() {
+
+				let self = this
+				let params = {
+					tsdate: self.newDate,
+					productareaid: self.newArea === '全部' || self.newArea === '' ? 0 : self.newArea.value,
+					producttypeid: self.newFamily === '全部' || self.newFamily === '' ? 0 : self.newFamily.value,
+					areastarttsdate: self.newDate2[0],
+					areaendtsdate: self.newDate2[1],
+					producttypestarttsdate: self.newDate3[0],
+					producttypeendtsdate: self.newDate3[1]
+				}
+				axios.post(url + '/WebAPI/api/DashbordMain/Lists', params).then(function(res) {
+					if (res.status === 200) {
+						self.$nextTick(() => {
+							// 表格
+							self.tableData = res.data.list.T1.length == 0 ? [] : res.data.list.T1;
+							//人数统计
+							self.peopleData = res.data.list.T2.length == 0 ? [] : Object.values(
+								Array.from(res.data.list.T2)[0]);
+
+							// T1-T5比例图
+							let T3ist = []
+							for (let [key, value] of Object.entries(res.data.list.T3[0])) {
+								T3ist.push({
+									value: value,
+									name: key
+								})
+								self.dataTwoPie = T3ist
+							}
+
+
+							//TS时间分布
+							let T6ist = []
+							for (let [key, value] of Object.entries(res.data.list.T6[0])) {
+								T6ist.push({
+									value: value,
+									name: key
+								})
+								self.fiveEchart = T6ist
+							}
+
+
+							//TS时间分布比例图
+							let T7ist = []
+							for (let [key, value] of Object.entries(res.data.list.T7[0])) {
+								T7ist.push({
+									value: value,
+									name: key
+								})
+								self.KsData = T7ist
+							}
+
+
+							//OEE & NEE 可选择图
+							let T4data1 = []
+							let T4data2 = []
+							let T4data3 = []
+							let T4data4 = []
+							Array.from(res.data.list.T4).map(item => {
+								T4data1.push(item.OEE * 100)
+								T4data2.push(item.NEE * 100)
+								T4data3.push(item.TargetOEE)
+								T4data4.push(item.TargetNEE)
+							});
+							self.dataOneBar.dataOneBar1 = T4data1
+							self.dataOneBar.dataOneBar2 = T4data2
+							self.dataOneBar.dataOneBar3 = T4data3
+							self.dataOneBar.dataOneBar4 = T4data4
+
+
+
+							//IE & KE 可选择图
+							let T8data1 = []
+							let T8data2 = []
+							let T8data3 = []
+							let T8data4 = []
+							Array.from(res.data.list.T8).map(item => {
+								T8data1.push(item.KE * 100)
+								T8data2.push(item.IE * 100)
+								T8data3.push(item.TargetKE)
+								T8data4.push(item.TargetIE)
+							});
+							self.dataKEBar.dataKEBar1 = T8data1
+							self.dataKEBar.dataKEBar2 = T8data2
+							self.dataKEBar.dataKEBar3 = T8data3
+							self.dataKEBar.dataKEBar4 = T8data4
+
+
+
+							//OEE & NEE 不可选择
+							let T5dataX = []
+							let T5data1 = []
+							let T5data2 = []
+							let T5data3 = []
+							let T5data4 = []
+							Array.from(res.data.list.T5).map(item => {
+								T5dataX.push(item.month + '月')
+								T5data1.push(item.oee)
+								T5data2.push(item.nee)
+								T5data3.push(item.toee)
+								T5data4.push(item.tnee)
+							});
+							self.dataOneBar2.dataOneBarX = T5dataX
+							self.dataOneBar2.dataOneBar1 = T5data1
+							self.dataOneBar2.dataOneBar2 = T5data2
+							self.dataOneBar2.dataOneBar3 = T5data3
+							self.dataOneBar2.dataOneBar4 = T5data4
+
+
+							//KE & IE 不可选择
+							let T9dataX = []
+							let T9data1 = []
+							let T9data2 = []
+							let T9data3 = []
+							let T9data4 = []
+							Array.from(res.data.list.T9).map(item => {
+								T9dataX.push(item.month + '月')
+								T9data1.push(item.ke)
+								T9data2.push(item.ie)
+								T9data3.push(item.tke)
+								T9data4.push(item.tie)
+							});
+							self.dataKEBar2.dataKEBarX = T9dataX
+							self.dataKEBar2.dataOneBar1 = T9data1
+							self.dataKEBar2.dataOneBar2 = T9data2
+							self.dataKEBar2.dataOneBar3 = T9data3
+							self.dataKEBar2.dataOneBar4 = T9data4
+
+
+
+
+							self.myChart1()
+							self.myChart2()
+							self.myChart3()
+							self.myChart4()
+							self.myChart5()
+							self.myChart6()
+							self.myChart7()
+							self.myChart8()
+						})
+
+					}
+				})
+
+
+			},
+
+			//DVA 出勤状况
+			myChart1() {
+				// 基于准备好的dom，初始化echarts实例
+				var myChart1 = echarts.init(document.getElementById('myChart1'));
+
+				var placeHolderStyle = {
+					normal: {
+						label: {
+							show: false
+						},
+						labelLine: {
+							show: false
+						},
+						color: "rgba(0,0,0,0)",
+						borderWidth: 0
+					},
+					emphasis: {
+						borderWidth: 0
+					}
+				};
+
+
+				var dataStyle = {
+					normal: {
+						formatter: '{c}人',
+						position: 'center',
+						show: true,
+						textStyle: {
+							fontSize: '15',
+							fontWeight: 'normal',
+							color: '#AAAFC8',
+							fontFamily: 'cursive',
+						}
+					}
+				};
+
+
+				option = {
+
+					title: [{
+							text: 'DVC Attendance 出勤状况',
+							left: 'center',
+							y: '2', //垂
+							textStyle: { //主标题文本样式
+								fontSize: 20,
+								color: "#37CC48",
+								fontFamily: 'cursive',
+							},
+						},
+
+						{
+							text: '计划人数',
+							left: '60%',
+							top: '25%',
+							textAlign: 'center',
+							textStyle: {
+								fontWeight: 'normal',
+								fontSize: '15',
+								color: '#fff',
+								textAlign: 'center',
+								fontFamily: 'cursive',
+							},
+						}, {
+							text: '当天排班人数',
+							left: '60%',
+							top: '50%',
+							textAlign: 'center',
+							textStyle: {
+								color: '#fff',
+								fontWeight: 'normal',
+								fontSize: '15',
+								textAlign: 'center',
+								fontFamily: 'cursive',
+							},
+						}, {
+							text: '实际人数',
+							left: '60%',
+							top: '75%',
+							textAlign: 'center',
+							textStyle: {
+								color: '#fff',
+								fontWeight: 'normal',
+								fontSize: '15',
+								textAlign: 'center',
+								fontFamily: 'cursive',
+							},
+						}
+					],
+
+					//第一个图表
+					series: [{
+							type: 'pie',
+							hoverAnimation: false, //鼠标经过的特效
+							radius: ['20%', '25%'],
+							center: ['30%', '30%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: 100,
+									itemStyle: {
+										normal: {
+											color: ['rgba(176, 212, 251, 0.3)']
+										}
+									},
+								}, {
+									value: 35,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+						//上层环形配置
+						{
+							type: 'pie',
+							hoverAnimation: false, //鼠标经过的特效
+							radius: ['20%', '25%'],
+							center: ['30%', '30%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: this.peopleData[0],
+									"itemStyle": {
+										"normal": {
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+												"offset": 0,
+												"color": '#37CC48'
+											}, {
+												"offset": 1,
+												"color": '#ffff66'
+											}]),
+										}
+									},
+									label: dataStyle,
+								}, {
+									value: 35,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+
+
+						//第二个图表
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['20%', '25%'],
+							center: ['30%', '58%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: 100,
+									itemStyle: {
+										normal: {
+											color: ['rgba(176, 212, 251, 0.3)']
+										}
+									},
+
+								}, {
+									value: 35,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+
+						//上层环形配置
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['20%', '25%'],
+							center: ['30%', '58%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: this.peopleData[1],
+									"itemStyle": {
+										"normal": {
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+												"offset": 0,
+												"color": '#37CC48'
+											}, {
+												"offset": 1,
+												"color": '#CACED3'
+
+											}]),
+										}
+									},
+									label: dataStyle,
+								}, {
+									value: 55,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+						//第三个图表
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['20%', '25%'],
+							center: ['30%', '83%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: 100,
+									itemStyle: {
+										normal: {
+											color: ['rgba(176, 212, 251, 0.3)']
+										}
+									},
+
+								}, {
+									value: 35,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+
+						//上层环形配置
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['20%', '25%'],
+							center: ['30%', '83%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: this.peopleData[2],
+									"itemStyle": {
+										"normal": {
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+												"offset": 0,
+												"color": '#CACED3'
+											}, {
+												"offset": 1,
+												"color": '#ffff66'
+											}]),
+										}
+									},
+									label: dataStyle,
+								}, {
+									value: 55,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+					]
+				};
+				myChart1.setOption(option);
+				window.onresize = function() {
+					myChart1.resize();
+				}
+			},
+
+
+			//T1-T5 时间分布比例图
+			myChart2() {
+				// 基于准备好的dom，初始化echarts实例
+				var myChart2 = echarts.init(document.getElementById('myChart2'));
+				// 指定图表的配置项和数据
+				var option = {
+					title: {
+						text: 'T1-T5 Distribution 时间分布',
+						left: 'center',
+						y: '2', //垂
+						textStyle: { //主标题文本样式
+							fontSize: 20,
+							fontFamily: 'cursive',
+							color: "#37CC48"
+						}
+					},
+					color: ['#00aa00', 'red', '#ffff66', '#ff5500', '#55ffff', '#0055ff'],
+					tooltip: {
+						trigger: 'item',
+						formatter: "{a} <br/>{b} : {c}(H) ({d}%)"
+					},
+					legend: {
+						left: 'center',
+						y: '40px',
+						textStyle: { //图例文字的样式
+							color: '#fff',
+							fontSize: 15,
+							fontFamily: 'cursive',
+						},
+						itemWidth: 12, // 设置宽度
+						itemHeight: 12, // 设置高度
+						itemGap: 7 // 设置间距
+					},
+					series: [{
+						name: '所占比例',
+						type: 'pie',
+						radius: [40, 60],
+						center: ['50%', '75%'],
+						roseType: 'area',
+						itemStyle: {
+							borderRadius: 8,
+						},
+						data: this.dataTwoPie,
+						label: { //饼图图形上的文本标签
+							normal: {
+								show: true,
+								// position:'left', //标签的位置
+								textStyle: {
+									fontSize: 13, //文字的字体大小
+									fontFamily: 'cursive',
+								},
+								formatter: '{b}:{c}(H)' + '\n' + ' ({d}%)',
+							},
+						},
+					}]
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart2.setOption(option);
+				window.onresize = function() {
+					myChart2.resize();
+				}
+			},
+
+
+			//OEE & NEE 可选择查询
+			myChart3() {
+				// 基于准备好的dom，初始化echarts实例
+				var myChart3 = echarts.init(document.getElementById('myChart3'));
+				// 指定图表的配置项和数据
+				var option = {
+					title: {
+						text: 'OEE & NEE',
+						left: 'center',
+						y: '2', //垂
+						textStyle: { //主标题文本样式
+							fontSize: 20,
+							color: "#37CC48",
+							fontFamily: 'cursive',
+						}
+					},
+					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					grid: {
+						left: '10%',
+						right: '10%',
+						top: '35%',
+						bottom: '15%',
+					},
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: {
+							type: 'cross',
+							crossStyle: {
+								color: 'fff'
+							}
+						}
+					},
+
+
+					legend: {
+						data: ['OEE', 'NEE', 'OEE Target', 'NEE Target'],
+						left: 'center',
+						y: '40px',
+						textStyle: { //图例文字的样式
+							color: '#fff',
+							fontSize: 15,
+							fontFamily: 'cursive',
+						},
+						itemWidth: 14, // 设置宽度
+						itemHeight: 14, // 设置高度
+						itemGap: 10 // 设置间距
+					},
+					xAxis: [{
+						type: 'category',
+						data: this.dataOneBar.dataOneBarX,
+						axisPointer: {
+							type: 'shadow',
+						},
+						axisLabel: {
+							textStyle: {
+								color: '#fff'
+							},
+
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#fff',
+								width: 2, //这里是为了突出显示加上的
+							},
+						},
+					}],
+					yAxis: [{
+							type: 'value',
+							name: '100%',
+							min: 0,
+							max: 150,
+							interval: 20,
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 12,
+							},
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								},
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+
+						{
+							type: 'value',
+							name: '100%',
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 15,
+								fontFamily: 'cursive',
+							},
+							min: 0,
+							max: 100,
+							interval: 20,
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								}
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+					],
+					series: [{
+							name: 'OEE',
+							type: 'bar',
+							data: this.dataOneBar.dataOneBar1,
+							barWidth: 20,
+							barGap: '10%'
+						},
+						{
+							name: 'NEE',
+							type: 'bar',
+							data: this.dataOneBar.dataOneBar2,
+							barWidth: 20,
+							barGap: '10%'
+						},
+						{
+							name: 'OEE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataOneBar.dataOneBar3,
+							barWidth: 20,
+						},
+						{
+							name: 'NEE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataOneBar.dataOneBar4,
+							barWidth: 20,
+						}
+					]
+
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart3.setOption(option);
+				window.onresize = function() {
+					myChart3.resize();
+				}
+			},
+
+
+			//OEE & NEE 不可选择查询
+			myChart4() {
+				// 基于准备好的dom，初始化echarts实例
+				var myChart4 = echarts.init(document.getElementById('myChart4'));
+				// 指定图表的配置项和数据
+				var option = {
+					title: {
+						text: this.newDate.slice(0, 4) + ' OEE & NEE',
+						left: 'center',
+						y: '2', //垂
+						textStyle: { //主标题文本样式
+							fontSize: 20,
+							color: "#37CC48",
+							fontFamily: 'cursive',
+						}
+					},
+					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					grid: {
+						left: '10%',
+						right: '10%',
+						top: '35%',
+						bottom: '15%',
+					},
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: {
+							type: 'cross',
+							crossStyle: {
+								color: 'fff'
+							}
+						}
+					},
+
+
+					legend: {
+						data: ['OEE', 'NEE', 'OEE Target', 'NEE Target'],
+						left: 'center',
+						y: '40px',
+						textStyle: { //图例文字的样式
+							color: '#fff',
+							fontSize: 15,
+							fontFamily: 'cursive',
+						},
+						itemWidth: 14, // 设置宽度
+						itemHeight: 14, // 设置高度
+						itemGap: 10 // 设置间距
+					},
+					xAxis: [{
+						type: 'category',
+						data: this.dataOneBar2.dataOneBarX,
+						axisPointer: {
+							type: 'shadow',
+						},
+						axisLabel: {
+							textStyle: {
+								color: '#fff'
+							},
+
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#fff',
+								width: 2, //这里是为了突出显示加上的
+							},
+						},
+					}],
+					yAxis: [{
+							type: 'value',
+							name: '100%',
+							min: 0,
+							max: 150,
+							interval: 20,
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 12,
+							},
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								},
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+
+						{
+							type: 'value',
+							name: '100%',
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 15,
+								fontFamily: 'cursive',
+							},
+							min: 0,
+							max: 100,
+							interval: 20,
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								}
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+					],
+					series: [{
+							name: 'OEE',
+							type: 'bar',
+							data: this.dataOneBar2.dataOneBar1,
+							barWidth: 15,
+							barGap: '10%'
+						},
+						{
+							name: 'NEE',
+							type: 'bar',
+							data: this.dataOneBar2.dataOneBar2,
+							barWidth: 15,
+							barGap: '10%'
+						},
+						{
+							name: 'OEE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataOneBar2.dataOneBar3,
+							barWidth: 20,
+						},
+						{
+							name: 'NEE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataOneBar2.dataOneBar4,
+							barWidth: 20,
+						}
+					]
+
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart4.setOption(option);
+				window.onresize = function() {
+					myChart4.resize();
+				}
+			},
+
+			//TS时间分布
+			myChart5() {
+				// 基于准备好的dom，初始化echarts实例
+				var myChart5 = echarts.init(document.getElementById('myChart5'));
+				// 指定图表的配置项和数据
+				var option = {
+					title: {
+						text: 'TS时间分布',
+						left: 'center',
+						y: '2', //垂
+						textStyle: { //主标题文本样式
+							fontSize: 20,
+							color: "#37CC48",
+							fontFamily: 'cursive',
+						}
+					},
+					color: ['#00aa00', '#ff0000', '#55ffff', '#ffea4a', '#ff5500', '#55aaff', '#ff557f'],
+					grid: {
+						left: '10%',
+						right: '10%',
+					},
+
+					tooltip: {
+						trigger: 'item',
+						formatter: "{a} <br/>{b} : {c}(人) ({d}%)"
+					},
+
+					// legend: {
+					// 	left: 'center',
+					// 	y: '40px',
+					// 	textStyle: { //图例文字的样式
+					// 		color: '#fff',
+					// 		fontSize: 13,
+					// 		fontFamily: 'cursive',
+					// 	},
+					// 	itemWidth: 15, // 设置宽度
+					// 	itemHeight: 12, // 设置高度
+					// 	itemGap: 0 // 设置间距
+					// },
+
+
+					series: [{
+						name: '所占比例',
+						type: 'pie',
+						radius: 60,
+						center: ['50%', '68%'],
+						data: this.fiveEchart,
+						label: { //饼图图形上的文本标签
+							normal: {
+								show: true,
+								// position:'left', //标签的位置
+								textStyle: {
+									fontSize: 13, //文字的字体大小
+									fontFamily: 'cursive',
+								},
+								// formatter: '{b}:{c}(H)' + '\n' + ' ({d}%)',
+							},
+						},
+						emphasis: {
+							itemStyle: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						}
+					}]
+
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart5.setOption(option);
+				window.onresize = function() {
+					myChart5.resize();
+				}
+			},
+
+
+			//ks时间分布图
+			myChart6() {
+				var myChart6 = echarts.init(document.getElementById('myChart6'));
+				var category = this.KsData // 类别
+				var total = 1; // 数据总数
+				var datas = [];
+				category.forEach(value => {
+					datas.push(value.value);
+
+					// datas.sort(function(a, b) { //callback
+					//       if (a > b) { // a b 分别是Arr中的 56 21
+					//           return 1  //返回正数 ，b排列在a之前
+					//       } else {
+					//           return -1 //返回负数 ，a排列在b之前
+					//       }
+					//   })
+
+
+				});
+				option = {
+					title: {
+						// text: 'KS distribution by item (Hrs)/KS时间分布图',
+						text: 'KS distrbution by item (Hrs)/KS时间分布图',
+						left: 'center',
+						y: '2', //垂
+						textStyle: { //主标题文本样式
+							fontSize: 20,
+							fontFamily: 'cursive',
+							color: "#37CC48"
+						}
+					},
+					xAxis: {
+						max: total,
+						// max: 'dataMax',
+						splitLine: {
+							show: false
+						},
+						axisLine: {
+							show: false
+						},
+						axisLabel: {
+							show: false
+						},
+						axisTick: {
+							show: false
+						},
+					},
+					grid: {
+						left: '25%',
+						right: '20%',
+						top: '15%',
+						bottom: '0%',
+					},
+					yAxis: [{
+						inverse: true,
+						type: "category",
+						data: category,
+						axisLine: {
+							show: false
+						},
+						axisTick: {
+							show: false
+						},
+						axisLabel: {
+							show: false
+						},
+
+
+					}],
+					series: [{
+							// 内
+							realtimeSort: true,
+							type: "bar",
+							barWidth: 13,
+							silent: true,
+							itemStyle: {
+								normal: {
+									color: {
+										colorStops: [{
+												offset: 0,
+												color: '#00aa00', // 0% 处的颜色
+											},
+											{
+												offset: 1,
+												color: 'red', // 100% 处的颜色
+											},
+										],
+									},
+
+								},
+							},
+							label: {
+								normal: {
+									formatter: "{b}",
+									textStyle: {
+										color: "#fff",
+										fontSize: 15,
+										fontFamily: 'cursive',
+									},
+									position: 'left',
+									distance: 10, // 向右偏移位置
+									show: true
+								}
+							},
+							data: category,
+							z: 1,
+							animationEasing: "elasticOut"
+						},
+
+						{
+							// 分隔
+							realtimeSort: true,
+							type: "pictorialBar",
+							itemStyle: {
+								normal: {
+									color: "#07314a"
+								}
+							},
+							symbolRepeat: "fixed",
+							symbolMargin: 1.5,
+							symbol: "rect",
+							symbolClip: true,
+							symbolSize: [5, 15],
+							symbolPosition: "start",
+							symbolOffset: [3, -3],
+							symbolBoundingData: this.total,
+							data: [total, total, total, total, total, total, total],
+							z: 2,
+							animationEasing: "elasticOut",
+
+
+						},
+						{
+							// label
+							type: "pictorialBar",
+							symbolBoundingData: total,
+							itemStyle: {
+								normal: {
+									color: "none"
+								}
+							},
+							label: {
+								normal: {
+									formatter: (params) => {
+										var text;
+										text = '{f| ' + (params.data * 100 / total) + '%}';
+										return text;
+									},
+									rich: {
+										f: {
+											color: "#ffffff"
+										}
+									},
+									position: 'right',
+									distance: 15, // 向右偏移位置
+									show: true
+								}
+							},
+							data: datas,
+							z: 0,
+
+						},
+
+						{
+							name: "外框",
+							type: "bar",
+							barGap: "-120%", // 设置外框粗细
+							data: [total, total, total, total, total, total, total],
+							barWidth: 20,
+							itemStyle: {
+								normal: {
+									barBorderRadius: [5, 5, 5, 5, 5, 5, 5],
+									color: "transparent", // 填充色
+									barBorderColor: "#00aa00", // 边框色
+									barBorderWidth: 1, // 边框宽度
+								}
+							},
+							z: 0
+						},
+						{
+							type: 'scatter',
+							name: '条形',
+							symbol: 'roundRect',
+							symbolSize: [5, 10],
+							symbolOffset: [5, -3],
+							symbolKeepAspect: true,
+							itemStyle: {
+								normal: {
+									color: "#00aa00"
+								}
+							},
+							data: [total, total, total, total, total, total, total],
+						}
+
+					]
+				}
+
+				// 使用刚指定的配置项和数据显示图表。
+				myChart6.setOption(option);
+				window.onresize = function() {
+					myChart6.resize();
+				}
+			},
+
+			//IE & KE 可选择查询
+			myChart7() {
+				// 基于准备好的dom，初始化echarts实例
+				var myChart7 = echarts.init(document.getElementById('myChart7'));
+				// 指定图表的配置项和数据
+				var option = {
+					title: {
+						text: 'IE & KE',
+						left: 'center',
+						y: '2', //垂
+						textStyle: { //主标题文本样式
+							fontSize: 20,
+							color: "#37CC48",
+							fontFamily: 'cursive',
+						}
+					},
+					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					grid: {
+						left: '10%',
+						right: '10%',
+						top: '35%',
+						bottom: '20%',
+					},
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: {
+							type: 'cross',
+							crossStyle: {
+								color: 'fff'
+							}
+						}
+					},
+
+
+					legend: {
+						data: ['KE', 'IE', 'KE Target', 'IE Target'],
+						left: 'center',
+						y: '40px',
+						textStyle: { //图例文字的样式
+							color: '#fff',
+							fontSize: 15,
+							fontFamily: 'cursive',
+						},
+						itemWidth: 14, // 设置宽度
+						itemHeight: 14, // 设置高度
+						itemGap: 10 // 设置间距
+					},
+					xAxis: [{
+						type: 'category',
+						data: this.dataKEBar.dataKEBarX,
+						axisPointer: {
+							type: 'shadow',
+						},
+						axisLabel: {
+							textStyle: {
+								color: '#fff'
+							},
+							interval: 0,
+							rotate: 20
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#fff',
+								width: 2, //这里是为了突出显示加上的
+							},
+						},
+					}],
+					yAxis: [{
+							type: 'value',
+							name: '100%',
+							min: 0,
+							max: 150,
+							interval: 20,
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 12,
+							},
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								},
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+
+						{
+							type: 'value',
+							name: '100%',
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 15,
+								fontFamily: 'cursive',
+							},
+							min: 0,
+							max: 100,
+							interval: 20,
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								}
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+					],
+					series: [{
+							name: 'KE',
+							type: 'bar',
+							data: this.dataKEBar.dataKEBar1,
+							barWidth: 20,
+							barGap: '10%'
+
+						},
+						{
+							name: 'IE',
+							type: 'bar',
+							data: this.dataKEBar.dataKEBar2,
+							barWidth: 20,
+							barGap: '10%'
+
+						},
+						{
+							name: 'KE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataKEBar.dataKEBar3,
+							barWidth: 30,
+						},
+						{
+							name: 'IE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataKEBar.dataKEBar4,
+							barWidth: 20,
+						}
+					],
+					dataZoom: {
+						show: true, // 为true 滚动条出现
+						zoomLock: true,
+						realtime: true,
+						type: 'slider', // 有type这个属性，滚动条在最下面，也可以不行，写y：36，这表示距离顶端36px，一般就是在图上面。
+						height: 15, // 表示滚动条的高度，也就是粗细
+						start: 0, // 表示默认展示20%～80%这一段。
+						end: 10,
+						bottom: 5,
+					}
+
+
+
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart7.setOption(option);
+				window.onresize = function() {
+					myChart7.resize();
+				}
+			},
+
+			//IE & KE 不可选择查询
+			myChart8() {
+				// 基于准备好的dom，初始化echarts实例
+				var myChart8 = echarts.init(document.getElementById('myChart8'));
+				// 指定图表的配置项和数据
+				var option = {
+					title: {
+						text: this.newDate.slice(0, 4) + ' IE & KE',
+						left: 'center',
+						y: '2', //垂
+						textStyle: { //主标题文本样式
+							fontSize: 20,
+							color: "#37CC48",
+							fontFamily: 'cursive',
+						}
+					},
+					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					grid: {
+						left: '10%',
+						right: '10%',
+						top: '35%',
+						bottom: '15%',
+					},
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: {
+							type: 'cross',
+							crossStyle: {
+								color: 'fff'
+							}
+						}
+					},
+
+
+					legend: {
+						data: ['KE', 'IE', 'KE Target', 'IE Target'],
+						left: 'center',
+						y: '40px',
+						textStyle: { //图例文字的样式
+							color: '#fff',
+							fontSize: 15,
+							fontFamily: 'cursive',
+						},
+						itemWidth: 14, // 设置宽度
+						itemHeight: 14, // 设置高度
+						itemGap: 10 // 设置间距
+					},
+					xAxis: [{
+						type: 'category',
+						data: this.dataKEBar2.dataKEBarX,
+						axisPointer: {
+							type: 'shadow',
+						},
+						axisLabel: {
+							textStyle: {
+								color: '#fff'
+							},
+
+						},
+						axisLine: {
+							lineStyle: {
+								color: '#fff',
+								width: 2, //这里是为了突出显示加上的
+							},
+						},
+					}],
+					yAxis: [{
+							type: 'value',
+							name: '100%',
+							min: 0,
+							max: 150,
+							interval: 20,
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 12,
+							},
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								},
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+
+						{
+							type: 'value',
+							name: '100%',
+							nameTextStyle: {
+								color: "#fff",
+								fontSize: 15,
+								fontFamily: 'cursive',
+							},
+							min: 0,
+							max: 100,
+							interval: 20,
+							axisLabel: {
+								formatter: '{value} %',
+								textStyle: {
+									color: '#fff'
+								}
+							},
+							axisLine: {
+								lineStyle: {
+									color: '#fff',
+									width: 1, //这里是为了突出显示加上的
+								}
+							},
+
+							splitLine: { //网格线
+								show: false
+							}
+
+						},
+					],
+					series: [{
+							name: 'KE',
+							type: 'bar',
+							data: this.dataKEBar2.dataOneBar1,
+							barWidth: 15,
+							barGap: '10%'
+						},
+						{
+							name: 'IE',
+							type: 'bar',
+							data: this.dataKEBar2.dataOneBar2,
+							barWidth: 15,
+							barGap: '10%'
+						},
+						{
+							name: 'KE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataKEBar2.dataOneBar3,
+							barWidth: 20,
+						},
+						{
+							name: 'IE Target',
+							type: 'line',
+							// yAxisIndex: 1,
+							data: this.dataKEBar2.dataOneBar4,
+							barWidth: 0,
+						}
+					]
+
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart8.setOption(option);
+				window.onresize = function() {
+					myChart8.resize();
+				}
+			},
+		},
+		mounted() {
+			let self = this
+			//初始化中间表格查询
+			self.centerTable()
+
+
+
+			// 获取区域接口
+			axios.post(url + '/WebAPI/api/Common/GetProductAreaIdText', {}).then(function(res) {
+				if (res.status === 200) {
+					let newList = []
+					for (let [key, value] of Object.entries(res.data.list)) {
+						newList.push({
+							value: key,
+							label: value.text
+						})
+						self.labelList.push(value.text)
+					}
+					self.optionsArea = newList
+					self.dataOneBar.dataOneBarX = self.labelList
+
+
+				}
+			});
+
+
+			// 获取产品类型接口
+			axios.post(url + '/WebAPI/api/Common/GetproducttypeidText', {}).then(function(res) {
+				if (res.status === 200) {
+					let newList = []
+					for (let [key, value] of Object.entries(res.data.list)) {
+						newList.push({
+							value: key,
+							label: value.text
+						})
+						self.labelList2.push(value.text)
+					}
+					self.optionsFamily = newList
+					self.dataKEBar.dataKEBarX = self.labelList2
+					self.$set(self.dataKEBar.dataKEBarX, self.labelList2)
+					console.log(self.labelList2)
+					// self.dataKEBar.dataKEBarX  = Object.assign({}, self.labelList2)
+				}
+			});
+
+		}
+
+
+	})
+</script>
