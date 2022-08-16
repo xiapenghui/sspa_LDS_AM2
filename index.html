@@ -164,11 +164,10 @@
 
 </html>
 <script type="text/javascript">
-	// let url = "http://10.177.34.15:23111"
+	 
 	// let url = "http://192.168.1.18:9100"
 	let url = "http://192.168.1.18:23113"
 	// let url = "http://10.177.34.15:23113"
-
 	new Vue({
 		el: '#content',
 		data: {
@@ -177,14 +176,14 @@
 					return time.getTime() > Date.now(); //如果没有后面的-8.64e7就是不可以选择今天的 
 				}
 			},
-			newDate: moment().subtract(1, "days") .format("YYYY-MM-DD"), //选择日期
+			newDate: moment().subtract(1, "days").format("YYYY-MM-DD"), //选择日期
 			newDate2: [
-				moment().subtract(1, "days") .format("YYYY-MM-DD"),
-				moment().subtract(1, "days") .format("YYYY-MM-DD")
+				moment().subtract(1, "days").format("YYYY-MM-DD"),
+				moment().subtract(1, "days").format("YYYY-MM-DD")
 			], //OEE& NEE 选择日期
 			newDate3: [
-				moment().subtract(1, "days") .format("YYYY-MM-DD"),
-				moment().subtract(1, "days") .format("YYYY-MM-DD")
+				moment().subtract(1, "days").format("YYYY-MM-DD"),
+				moment().subtract(1, "days").format("YYYY-MM-DD")
 			], //IE&& KE  选择日期
 			newArea: '全部', // 选择区域默认值,
 			optionsArea: [], // 选择区域
@@ -870,19 +869,19 @@
 							borderRadius: 8,
 						},
 						data: this.dataTwoPie,
-						labelLine:{
-						    normal:{
-								length:0
-							}	
+						labelLine: {
+							normal: {
+								length: 0
+							}
 						},
 						label: { //饼图图形上的文本标签
 							normal: {
 								show: true,
-								position:'outer', //标签的位置
+								position: 'outer', //标签的位置
 								textStyle: {
 									fontSize: 13, //文字的字体大小
 								},
-								formatter: '{b}:{c}(H)'+'\n'+'({d}%)',
+								formatter: '{b}:{c}(H)' + '\n' + '({d}%)',
 							},
 						},
 					}]
@@ -911,7 +910,7 @@
 
 						}
 					},
-					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					color: ['#00aa00', '#00e8ff', '#00aa00', '#00e8ff', ],
 					grid: {
 						left: '10%',
 						right: '10%',
@@ -1022,14 +1021,14 @@
 					],
 					series: [{
 							name: 'OEE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataOneBar.dataOneBar1,
 							barWidth: 15,
 							barGap: '10%'
 						},
 						{
 							name: 'NEE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataOneBar.dataOneBar2,
 							barWidth: 15,
 							barGap: '10%'
@@ -1037,6 +1036,9 @@
 						{
 							name: 'OEE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataOneBar.dataOneBar3,
 							barWidth: 15,
@@ -1044,6 +1046,9 @@
 						{
 							name: 'NEE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataOneBar.dataOneBar4,
 							barWidth: 15,
@@ -1075,7 +1080,7 @@
 
 						}
 					},
-					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					color: ['#00aa00', '#00e8ff', '#00aa00', '#00e8ff', ],
 					grid: {
 						left: '10%',
 						right: '10%',
@@ -1186,14 +1191,14 @@
 					],
 					series: [{
 							name: 'OEE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataOneBar2.dataOneBar1,
 							barWidth: 15,
 							barGap: '10%'
 						},
 						{
 							name: 'NEE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataOneBar2.dataOneBar2,
 							barWidth: 15,
 							barGap: '10%'
@@ -1201,6 +1206,9 @@
 						{
 							name: 'OEE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataOneBar2.dataOneBar3,
 							barWidth: 15,
@@ -1208,6 +1216,9 @@
 						{
 							name: 'NEE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataOneBar2.dataOneBar4,
 							barWidth: 15,
@@ -1238,7 +1249,9 @@
 
 						}
 					},
-					color: ['#aa55ff', '#ff0000', '#55ffff', '#ffea4a', '#ff5500', '#55aaff', '#ff557f','#00aa00'],
+					color: ['#aa55ff', '#00e8ff', '#55ffff', '#ffea4a', '#ff5500', '#55aaff', '#ff557f',
+						'#00aa00'
+					],
 					grid: {
 						left: '10%',
 						right: '10%',
@@ -1517,7 +1530,7 @@
 
 						}
 					},
-					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					color: ['#00aa00', '#00e8ff', '#00aa00', '#00e8ff', ],
 					grid: {
 						left: '10%',
 						right: '10%',
@@ -1629,7 +1642,7 @@
 					],
 					series: [{
 							name: 'KE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataKEBar.dataKEBar1,
 							barWidth: 15,
 							barGap: '10%'
@@ -1637,7 +1650,7 @@
 						},
 						{
 							name: 'IE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataKEBar.dataKEBar2,
 							barWidth: 15,
 							barGap: '10%'
@@ -1646,6 +1659,9 @@
 						{
 							name: 'KE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataKEBar.dataKEBar3,
 							barWidth: 30,
@@ -1653,6 +1669,9 @@
 						{
 							name: 'IE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataKEBar.dataKEBar4,
 							barWidth: 15,
@@ -1695,7 +1714,7 @@
 
 						}
 					},
-					color: ['#00aa00', '#ff0000', '#cccccc', '#ffaaff', ],
+					color: ['#00aa00', '#00e8ff', '#00aa00', '#00e8ff', ],
 					grid: {
 						left: '10%',
 						right: '10%',
@@ -1806,14 +1825,14 @@
 					],
 					series: [{
 							name: 'KE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataKEBar2.dataOneBar1,
 							barWidth: 15,
 							barGap: '10%'
 						},
 						{
 							name: 'IE',
-							type: 'bar',
+							type: 'line',
 							data: this.dataKEBar2.dataOneBar2,
 							barWidth: 15,
 							barGap: '10%'
@@ -1821,6 +1840,9 @@
 						{
 							name: 'KE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataKEBar2.dataOneBar3,
 							barWidth: 15,
@@ -1828,6 +1850,9 @@
 						{
 							name: 'IE Target',
 							type: 'line',
+							lineStyle: {
+								type: 'dashed'
+							},
 							// yAxisIndex: 1,
 							data: this.dataKEBar2.dataOneBar4,
 							barWidth: 0,
@@ -1846,7 +1871,7 @@
 			let self = this
 			//初始化中间表格查询
 			self.centerTable()
-			
+
 
 
 			// 获取区域接口
