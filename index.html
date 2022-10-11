@@ -166,8 +166,8 @@
 <script type="text/javascript">
 	 
 	// let url = "http://192.168.1.18:9100"
-	let url = "http://192.168.1.18:23113"
-	// let url = "http://10.177.34.15:23113"
+	// let url = "http://192.168.1.18:23113"
+	let url = "http://10.177.34.15:23113"
 	new Vue({
 		el: '#content',
 		data: {
@@ -1455,7 +1455,7 @@
 								normal: {
 									formatter: (params) => {
 										var text;
-										text = '{f| ' + (params.data * 100 / total) + '%}';
+										text = '{f| ' + ((params.data * 100 / total).toFixed(2)) + '%}';
 										return text;
 									},
 									rich: {
