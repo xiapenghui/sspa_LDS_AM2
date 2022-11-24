@@ -164,7 +164,6 @@
 
 </html>
 <script type="text/javascript">
-	 
 	// let url = "http://192.168.1.18:9100"
 	// let url = "http://192.168.1.18:23113"
 	let url = "http://10.177.34.15:23113"
@@ -538,11 +537,11 @@
 
 				var dataStyle = {
 					normal: {
-						formatter: '{c}人',
+						formatter: '{c}',
 						position: 'center',
 						show: true,
 						textStyle: {
-							fontSize: '15',
+							fontSize: '13',
 							fontWeight: 'normal',
 							color: '#AAAFC8',
 
@@ -567,7 +566,7 @@
 						{
 							text: '计划人数',
 							left: '60%',
-							top: '25%',
+							top: '20%',
 							textAlign: 'center',
 							textStyle: {
 								fontWeight: 'normal',
@@ -578,8 +577,8 @@
 							},
 						}, {
 							text: '当天排班人数',
-							left: '60%',
-							top: '50%',
+							left: '65%',
+							top: '40%',
 							textAlign: 'center',
 							textStyle: {
 								color: '#fff',
@@ -588,15 +587,41 @@
 								textAlign: 'center',
 
 							},
-						}, {
+						},
+						{
 							text: '实际人数',
 							left: '60%',
-							top: '75%',
+							top: '63%',
 							textAlign: 'center',
 							textStyle: {
 								color: '#fff',
 								fontWeight: 'normal',
 								fontSize: '15',
+								textAlign: 'center',
+							}
+						},
+						{
+							text: '焊接人数',
+							left: '33%',
+							top: '84%',
+							textAlign: 'center',
+							textStyle: {
+								color: '#fff',
+								fontWeight: 'normal',
+								fontSize: '12',
+								textAlign: 'center',
+
+							},
+						},
+						{
+							text: '非焊接人数',
+							left: '85%',
+							top: '84%',
+							textAlign: 'center',
+							textStyle: {
+								color: '#fff',
+								fontWeight: 'normal',
+								fontSize: '12',
 								textAlign: 'center',
 
 							},
@@ -607,8 +632,8 @@
 					series: [{
 							type: 'pie',
 							hoverAnimation: false, //鼠标经过的特效
-							radius: ['20%', '25%'],
-							center: ['30%', '30%'],
+							radius: ['15%', '20%'],
+							center: ['35%', '25%'],
 							startAngle: 225,
 							labelLine: {
 								normal: {
@@ -638,8 +663,8 @@
 						{
 							type: 'pie',
 							hoverAnimation: false, //鼠标经过的特效
-							radius: ['20%', '25%'],
-							center: ['30%', '30%'],
+							radius: ['15%', '20%'],
+							center: ['35%', '25%'],
 							startAngle: 225,
 							labelLine: {
 								normal: {
@@ -655,13 +680,14 @@
 									value: this.peopleData[0],
 									"itemStyle": {
 										"normal": {
-											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-												"offset": 0,
-												"color": '#37CC48'
-											}, {
-												"offset": 1,
-												"color": '#ffff66'
-											}]),
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+												[{
+													"offset": 0,
+													"color": '#37CC48'
+												}, {
+													"offset": 1,
+													"color": '#ffff66'
+												}]),
 										}
 									},
 									label: dataStyle,
@@ -678,8 +704,8 @@
 						{
 							type: 'pie',
 							hoverAnimation: false,
-							radius: ['20%', '25%'],
-							center: ['30%', '58%'],
+							radius: ['15%', '20%'],
+							center: ['35%', '48%'],
 							startAngle: 225,
 							labelLine: {
 								normal: {
@@ -711,8 +737,8 @@
 						{
 							type: 'pie',
 							hoverAnimation: false,
-							radius: ['20%', '25%'],
-							center: ['30%', '58%'],
+							radius: ['15%', '20%'],
+							center: ['35%', '48%'],
 							startAngle: 225,
 							labelLine: {
 								normal: {
@@ -725,17 +751,18 @@
 								}
 							},
 							data: [{
-									value: this.peopleData[1],
+									value: this.peopleData[1].toFixed(1),
 									"itemStyle": {
 										"normal": {
-											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-												"offset": 0,
-												"color": '#37CC48'
-											}, {
-												"offset": 1,
-												"color": '#CACED3'
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+												[{
+													"offset": 0,
+													"color": '#37CC48'
+												}, {
+													"offset": 1,
+													"color": '#CACED3'
 
-											}]),
+												}]),
 										}
 									},
 									label: dataStyle,
@@ -747,11 +774,12 @@
 							]
 						},
 						//第三个图表
+
 						{
 							type: 'pie',
 							hoverAnimation: false,
-							radius: ['20%', '25%'],
-							center: ['30%', '83%'],
+							radius: ['15%', '20%'],
+							center: ['35%', '70%'],
 							startAngle: 225,
 							labelLine: {
 								normal: {
@@ -783,8 +811,52 @@
 						{
 							type: 'pie',
 							hoverAnimation: false,
-							radius: ['20%', '25%'],
-							center: ['30%', '83%'],
+							radius: ['15%', '20%'],
+							center: ['35%', '70%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+
+								}
+							},
+							data: [{
+									value: this.peopleData[2].toFixed(1),
+									"itemStyle": {
+										"normal": {
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+												[{
+													"offset": 0,
+													"color": '#CACED3'
+												}, {
+													"offset": 1,
+													"color": '#ffff66'
+												}]),
+										}
+									},
+									label: dataStyle,
+								}, {
+									value: 55,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+
+
+
+
+						//第四个图表
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['13%', '16%'],
+							center: ['15%', '90%'],
 							startAngle: 225,
 							labelLine: {
 								normal: {
@@ -797,16 +869,50 @@
 								}
 							},
 							data: [{
-									value: this.peopleData[2],
+									value: 100,
+									itemStyle: {
+										normal: {
+											color: ['rgba(176, 212, 251, 0.3)']
+										}
+									},
+
+								}, {
+									value: 35,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+
+						//上层环形配置
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['13%', '16%'],
+							center: ['15%', '90%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: this.peopleData[3].toFixed(1),
 									"itemStyle": {
 										"normal": {
-											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-												"offset": 0,
-												"color": '#CACED3'
-											}, {
-												"offset": 1,
-												"color": '#ffff66'
-											}]),
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+												[{
+													"offset": 0,
+													"color": '#d31913'
+												}, {
+													"offset": 1,
+													"color": '#5eff19'
+												}]),
 										}
 									},
 									label: dataStyle,
@@ -817,6 +923,80 @@
 
 							]
 						},
+
+						//第五个图表
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['13%', '16%'],
+							center: ['65%', '90%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: 100,
+									itemStyle: {
+										normal: {
+											color: ['rgba(176, 212, 251, 0.3)']
+										}
+									},
+
+								}, {
+									value: 35,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+
+						//上层环形配置
+						{
+							type: 'pie',
+							hoverAnimation: false,
+							radius: ['13%', '16%'],
+							center: ['65%', '90%'],
+							startAngle: 225,
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+							label: {
+								normal: {
+									position: 'center'
+								}
+							},
+							data: [{
+									value: this.peopleData[4].toFixed(1),
+									"itemStyle": {
+										"normal": {
+											"color": new echarts.graphic.LinearGradient(0, 0, 0, 1,
+												[{
+													"offset": 0,
+													"color": '#ffaa00'
+												}, {
+													"offset": 1,
+													"color": '#2020ff'
+												}]),
+										}
+									},
+									label: dataStyle,
+								}, {
+									value: 55,
+									itemStyle: placeHolderStyle,
+								},
+
+							]
+						},
+
 					]
 				};
 				myChart1.setOption(option);
@@ -890,6 +1070,7 @@
 				myChart2.setOption(option);
 				window.onresize = function() {
 					myChart2.resize();
+
 				}
 			},
 
@@ -1213,6 +1394,7 @@
 							data: this.dataOneBar2.dataOneBar3,
 							barWidth: 15,
 						},
+
 						{
 							name: 'NEE Target',
 							type: 'line',
@@ -1249,7 +1431,8 @@
 
 						}
 					},
-					color: ['#aa55ff', '#00e8ff', '#55ffff', '#ffea4a', '#ff5500', '#55aaff', '#ff557f',
+					color: ['#aa55ff', '#00e8ff', '#55ffff', '#ffea4a', '#ff5500', '#55aaff',
+						'#ff557f',
 						'#00aa00'
 					],
 					grid: {
@@ -1455,7 +1638,8 @@
 								normal: {
 									formatter: (params) => {
 										var text;
-										text = '{f| ' + ((params.data * 100 / total).toFixed(2)) + '%}';
+										text = '{f| ' + ((params.data * 100 / total).toFixed(
+											2)) + '%}';
 										return text;
 									},
 									rich: {

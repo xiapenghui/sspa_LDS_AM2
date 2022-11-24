@@ -1,0 +1,398 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+ul,
+ol {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+	color: #000;
+}
+
+img {
+	border: 0;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+body,
+html,
+#app {
+	width: 100vw;
+	height: 100vh;
+	color: #FFFFFF;
+	overflow: hidden;
+}
+
+#content {
+	position: relative;
+	background-color: #000;
+}
+
+.header {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 6.5vh;
+	line-height: 6.5vh;
+	color: #37CC48;
+	font-size: 2rem;
+	font-weight: bold;
+	letter-spacing: .1rem;
+	z-index: 9;
+
+}
+
+.header .logoTitle {
+	position: absolute;
+	top: 0;
+	left: 15%;
+}
+
+.header .logoImg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: auto;
+	height: 6.5vh;
+
+}
+
+.header .line {
+	position: absolute;
+	top: 6.3vh;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background-image: url(../image/kb_top_logo_line1.png);
+	background-position: center;
+	background-size: contain;
+}
+
+.header .time {
+	position: absolute;
+	top: -1vh;
+	right: 1vh;
+	font-size: 15px;
+	font-weight: bold;
+	letter-spacing: 0
+}
+
+#content .leftBox,
+#content .centerBox .fourBigBox .fourBox,
+#content .centerBox .fiveBox,
+#content .rightBox .threeBox,
+#content .rightBox .twoBox .pieChart,
+#content .rightBox .twoBox .batteryChart {
+	background-image: url(../image/bg.png);
+	background-repeat: no-repeat;
+	background-size: 100% 102%;
+	background-position: center;
+}
+
+#content .leftBox {
+	position: absolute;
+	top: 8vh;
+	left: 0.5%;
+	width: 32%;
+	height: 90vh;
+}
+
+#content .leftBox .toggle {
+	position: absolute;
+	top: 1.5%;
+	left: 93%;
+	cursor: pointer;
+}
+
+
+#content .el-icon-close,
+#content .el-icon-close {
+	font-size: 26px;
+	color: red;
+	font-weight: bold;
+}
+
+#content .el-icon-s-operation,
+#content .el-icon-s-operation {
+	font-size: 26px;
+	color: yellow;
+}
+
+
+
+#content .leftBox .search {
+	position: absolute;
+	top: 7%;
+	right: 10%;
+	z-index: 9;
+}
+
+.el-date-table td span {
+	color: #000000 !important;
+}
+
+.el-date-editor.el-input {
+	width: 150px !important;
+}
+
+.el-date-editor--daterange.el-input__inner {}
+
+#content .centerBox {
+	position: absolute;
+	top: 8vh;
+	left: 33.3%;
+	width: 33%;
+	height: 90vh;
+}
+
+#content .centerBox .fourBigBox {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+#content .centerBox .fourBigBox .fourBox {
+	width: 49%;
+	height: 29vh;
+	margin-bottom: 1.5vh;
+}
+
+#content .centerBox .fiveBox {
+	width: 100%;
+	height: 29vh;
+}
+
+#content .centerBox .fiveBottom {
+	margin-bottom: 1.5vh;
+}
+
+#content .rightBox {
+	position: absolute;
+	top: 8vh;
+	right: 1%;
+	width: 32%;
+	height: 90vh;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+#content .rightBox .twoBox {
+	width: 100%;
+	height: 29vh;
+	margin-bottom: 1.5vh;
+}
+
+#content .rightBox .threeBox {
+	width: 100%;
+	height: 29vh;
+	margin-bottom: 1.5vh;
+}
+
+
+
+#content .rightBox .twoBox .pieChart {
+	width: 49%;
+	height: 29vh;
+	float: left;
+	margin-bottom: 1.5vh;
+}
+
+#content .rightBox .twoBox .batteryChart {
+	width: 49%;
+	height: 29vh;
+	float: right;
+	margin-bottom: 1.5vh;
+}
+
+
+#content .fiveBottom .toggle2 {
+	position: absolute;
+	top: 35%;
+	right: 2%;
+	z-index: 9;
+}
+
+
+
+#content .fiveBottom .search2 {
+	position: absolute;
+	top: 39%;
+	right: -10%;
+	z-index: 9
+}
+
+
+#content .rightBox .toggle3 {
+	position: absolute;
+	top: 35%;
+	right: 2%;
+	z-index: 9;
+}
+
+#content .rightBox .search3 {
+	position: absolute;
+	top: 39%;
+	right: -10%;
+	z-index: 9
+}
+
+
+#content .rightBox .threeBox:last-child {
+	height: 29vh;
+}
+
+
+.mycharts {
+	width: 100%;
+	height: 100%;
+}
+
+.border {
+	padding: 4px;
+	border-style: solid;
+	border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.row1 {
+	position: absolute;
+	border-width: 3px 0 0 2px;
+	top: -1px;
+	left: -1px;
+	border-radius: 5px 0 0 0;
+}
+
+.row2 {
+	position: absolute;
+	border-width: 3px 2px 0 0;
+	top: -2px;
+	right: -2px;
+	border-radius: 0 5px 0 0;
+}
+
+.col1 {
+	position: absolute;
+	border-width: 0 0 3px 2px;
+	bottom: -2px;
+	left: -2px;
+	border-radius: 0 0 0 5px;
+}
+
+.col2 {
+	position: absolute;
+	border-width: 0 2px 3px 0;
+	bottom: -2px;
+	right: -2px;
+	border-radius: 0 0 5px 0;
+}
+
+
+
+
+.oneLeft .swiperTitle,
+.oneLeft .swiperData {
+	width: 100%;
+	text-align: center;
+}
+
+.oneLeft .swiperTitle {
+	height: 5.5vh;
+	line-height: 5.5vh;
+	font-size: 1.1rem;
+	font-weight: bold;
+	background-color: #37CC48;
+	border-bottom: 1px solid #fff;
+
+}
+
+.oneLeft .swiperData {
+	height: 85vh;
+	overflow: hidden;
+}
+
+.oneLeft .swiperData {
+	overflow: hidden;
+}
+
+.oneLeft .swiperData li {
+	height: 6vh;
+	line-height: 6vh;
+	font-size: 13px;
+	border-bottom: 0.5px solid #FFFFFF;
+}
+
+.mo20 {
+	width: 20%;
+	display: inline-block;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mo23 {
+	width: 23%;
+	display: inline-block;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.proutArea {
+	height: 8.5vh;
+	vertical-align: middle !important;
+}
+
+button {
+	cursor: pointer;
+}
+
+.el-button--success {
+	background-image: linear-gradient(to right, #37CC48, #37CC48) !important;
+	border: 1px solid #37CC48 !important;
+
+}
+
+.twoBox .pieChart .radius {
+	width: 100%;
+	height: 29%;
+	margin-top: 10px;
+	padding-left: 40px;
+}
+
+.twoBox .pieChart .radius span {
+	display: inline-block;
+	width: 80px;
+	height: 80px;
+	line-height: 80px;
+	text-align: center;
+	background-color: green;
+	border-radius: 50%;
+	font-size: 18px;
+	font-weight: bold;
+}
+.twoBox .pieChart .radius:nth-child(2) span{
+	background-color: orange;
+}
+.twoBox .pieChart .radius:nth-child(3) span{
+	background-color: #45d0d0;
+}
+
+.twoBox .pieChart .radius p{
+	display: inline-block;
+	width: 100px;
+	height: 80px;
+	margin-left: 20px;
+	text-align: left;
+}
